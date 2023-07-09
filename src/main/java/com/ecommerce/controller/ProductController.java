@@ -1,7 +1,5 @@
 package com.ecommerce.controller;
 
-import org.springframework.web.bind.annotation.RequestPart;
-
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
@@ -9,12 +7,15 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -46,8 +47,11 @@ public class ProductController {
 	
 	
 	@GetMapping("/allProducts")
-	public List<Product> getAllProduct(){
-		List<Product> allProduct = this.productService.getAllProduct();
+	public List<Product> getAllProduct(@RequestParam(defaultValue="0") Integer pageNumber,
+			@RequestParam(defaultValue="")String searchKey
+			){
+		List<Product> allProduct = this.productService.getAllProduct(pageNumber,searchKey);
+		System.out.println("size of result" +allProduct.size() );
 		return allProduct;
 	}
 //	@PreAuthorize("hasRole('Admin')")
@@ -80,5 +84,12 @@ public class ProductController {
 	public Product getProductDetailsById(@PathVariable("productId") Integer productId) {
 		Product productDetailsById = this.productService.getProductDetailsById(productId);
 		return productDetailsById;
+	}
+	
+//	@PreAuthorize("hasRole('User')")
+	@GetMapping("/getProductDetails/{isSingleProductCheckout}/{productId}")
+	public List<Product> getProductDetails( @PathVariable("isSingleProductCheckout")boolean isSingleProductCheckout,@PathVariable("productId") Integer productId) {
+		 List<Product> productDetails = this.productService.getProductDetails(isSingleProductCheckout, productId);
+		 return productDetails;
 	}
 }

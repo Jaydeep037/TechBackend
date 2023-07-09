@@ -1,5 +1,6 @@
 package com.ecommerce.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,7 +20,7 @@ public class OrderDetail {
 	private String orderStatus;
 	private Double orderAmount;
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private Product product;
 	
 	@OneToOne
