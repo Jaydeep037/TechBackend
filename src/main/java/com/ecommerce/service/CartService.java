@@ -32,15 +32,21 @@ public class CartService {
 //		or
 //		String userName = JwtAuthenticationFilter.CURRENT_USER;
 		Product product = productDao.findById(productId).get();
-		User user = null;
-		if (userName != null) {
-			user = userDao.findById(userName).get();
+		List<Cart> existingCar = cartDao.findAll();
+		boolean flag = existingCar.stream().anyMatch(x->productId==x.getProduct().getProductId());
+		if(flag) {
+			return null;
+		}else {
+			User user = null;
+			if (userName != null) {
+				user = userDao.findById(userName).get();
+			}
+			if (product != null && user != null) {
+				Cart cart = new Cart(product, user);
+				return cartDao.save(cart);
+			}
+			return null;	
 		}
-		if (product != null && user != null) {
-			Cart cart = new Cart(product, user);
-			return cartDao.save(cart);
-		}
-		return null;
 	}
 
 	public List<Cart> getCartDetails() {
@@ -53,4 +59,19 @@ public class CartService {
 		}
 		return null;
 	}
+	
+	public void deleteCartDetail(Integer cartId) {
+		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+		if(userName != null) {
+			User user  = this.userDao.findById(userName).get();
+			if(user!=null) {
+				List<Cart> cart = cartDao.findByUser(user);
+				boolean flag = cart.stream().anyMatch(x->cartId==x.getCartId());
+				if(flag) {
+					cartDao.deleteById(cartId);
+				}
+			}
+		}
+	}
+	
 }

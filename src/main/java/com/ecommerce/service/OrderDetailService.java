@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.ecommerce.dao.CartDao;
 import com.ecommerce.dao.OrderDetailDao;
 import com.ecommerce.dao.ProductDao;
 import com.ecommerce.dao.UserDao;
+import com.ecommerce.entity.Cart;
 import com.ecommerce.entity.OrderDetail;
 import com.ecommerce.entity.OrderInput;
 import com.ecommerce.entity.OrderProductQuantity;
@@ -30,7 +32,10 @@ public class OrderDetailService {
 	@Autowired
 	UserDao userDao;
 	
-	public void placeholder(OrderInput orderInput) {
+	@Autowired
+	CartDao cartDao;
+	
+	public void placeholder(OrderInput orderInput,boolean isCheckout) {
 		List<OrderProductQuantity> orderProductQuantityList = orderInput.getOrderProductQuantityList();	
 		for (OrderProductQuantity orderProductQuantity : orderProductQuantityList) {
 			Integer productId = orderProductQuantity.getProductId();
@@ -50,6 +55,10 @@ public class OrderDetailService {
 					product,
 					user
 					);
+			if(!isCheckout) {
+				List<Cart> carts = this.cartDao.findByUser(user);
+		     	carts.stream().forEach(x->cartDao.deleteById(x.getCartId()));
+			}
 			orderDetailDao.save(orderDetail);
 		}
 	}

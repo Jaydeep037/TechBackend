@@ -3,6 +3,7 @@ package com.ecommerce.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.criteria.CriteriaBuilder.In;
 
@@ -10,12 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ecommerce.dao.CartDao;
 import com.ecommerce.dao.ProductDao;
+import com.ecommerce.dao.UserDao;
+import com.ecommerce.entity.Cart;
 import com.ecommerce.entity.Product;
+import com.ecommerce.entity.User;
 
 
 
@@ -25,6 +31,12 @@ public class ProductService {
 
 	@Autowired
 	ProductDao productDao;
+	
+	@Autowired
+	UserDao userDao;
+	
+	@Autowired
+	CartDao cartDao;
 	
 	public Product addNewProduct(Product product, MultipartFile[] file) {
 		Product newProduct = productDao.save(product);
@@ -60,7 +72,7 @@ public class ProductService {
 	}
 	
 	public List<Product> getProductDetails(boolean isSingleCheckout,Integer productId) {
-		if(isSingleCheckout) {
+		if(isSingleCheckout && productId!=0) {
 //			We are going to buy single product 
 			List<Product> list = new ArrayList<>();
 			Product product = productDao.findById(productId).get();
@@ -68,7 +80,14 @@ public class ProductService {
 			return list;
 		}else {
 //			we are going to checkout entire cart
+			
+			String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+			
+			User user = this.userDao.findById(userName).get();
+			
+			List<Cart> carts = this.cartDao.findByUser(user);
+			return carts.stream().map(x->x.getProduct()).collect(Collectors.toList());
+			
 		}
-		return new ArrayList<>();
 	}
 }
