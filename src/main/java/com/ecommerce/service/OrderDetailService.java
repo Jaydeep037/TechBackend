@@ -35,6 +35,13 @@ public class OrderDetailService {
 	@Autowired
 	CartDao cartDao;
 	
+	
+	public List<OrderDetail> getOrdetails(){
+		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+		User user = this.userDao.findById(currentUser).get();
+		return this.orderDetailDao.findByUser(user);
+	}
+	
 	public void placeholder(OrderInput orderInput,boolean isCheckout) {
 		List<OrderProductQuantity> orderProductQuantityList = orderInput.getOrderProductQuantityList();	
 		for (OrderProductQuantity orderProductQuantity : orderProductQuantityList) {

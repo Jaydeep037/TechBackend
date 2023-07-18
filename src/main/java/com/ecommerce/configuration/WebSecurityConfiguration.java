@@ -55,7 +55,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter	 {
 //		.antMatchers("/deleteProducts/{productId}").permitAll()
 		.antMatchers("/forAdmin").hasAnyAuthority("Admin")
 	    .antMatchers("/forUser").hasAnyAuthority("Admin","User")
-	    .antMatchers("/placeorder","/getProductDetails/{isSingleProductCheckout}/{productId}","/newCart/{productId}","/getCartDetails","/deleteCart/{cartId}").hasAnyAuthority("User")
+	    .antMatchers("/placeorder","/getProductDetails/{isSingleProductCheckout}/{productId}",
+	    		"/newCart/{productId}","/getCartDetails",
+	    		"/deleteCart/{cartId}","/getOrderDetails").hasAnyAuthority("User")
 	    .antMatchers("/addNewProduct","/deleteProducts/{productId}").hasAnyAuthority("Admin")
 //		.antMatchers(HttpHeaders.ALLOW).permitAll()
 //		.antMatchers(HttpMethod.GET).permitAll()//  Only access get api without login
