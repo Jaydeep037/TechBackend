@@ -69,4 +69,9 @@ public class OrderDetailService {
 			orderDetailDao.save(orderDetail);
 		}
 	}
+	
+	public List<OrderDetail> getAllOrderDetails(){
+		List<OrderDetail> orderDetail = this.orderDetailDao.findAll();
+		return orderDetail;
+	}
 }

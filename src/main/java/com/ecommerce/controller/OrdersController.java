@@ -30,4 +30,9 @@ public class OrdersController {
 	public List<OrderDetail> getOrderDetails(){
 		return this.orderDetailService.getOrdetails();
 	}
+	
+	@GetMapping("/getAllOrders")
+	public List<OrderDetail> getAllOrderDetails(){
+		return this.orderDetailService.getAllOrderDetails();
+	}
 }
