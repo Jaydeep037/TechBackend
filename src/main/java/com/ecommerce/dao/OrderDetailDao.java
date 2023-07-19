@@ -9,4 +9,6 @@ import com.ecommerce.entity.User;
 
 public interface OrderDetailDao extends JpaRepository<OrderDetail, Integer>{
 public List<OrderDetail> findByUser(User user);
+
+public List<OrderDetail> findByOrderStatus(String order);
 }

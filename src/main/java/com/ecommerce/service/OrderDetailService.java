@@ -1,6 +1,7 @@
 package com.ecommerce.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -70,8 +71,26 @@ public class OrderDetailService {
 		}
 	}
 	
-	public List<OrderDetail> getAllOrderDetails(){
-		List<OrderDetail> orderDetail = this.orderDetailDao.findAll();
-		return orderDetail;
+	public List<OrderDetail> getAllOrderDetails(String status){
+		if(status.equals("All")) {
+			List<OrderDetail> orderDetail = this.orderDetailDao.findAll();
+			return orderDetail;	
+		}else {
+			List<OrderDetail> orderDetail = this.orderDetailDao.findByOrderStatus(status);
+			return orderDetail;
+		}
+	}
+	
+	public OrderDetail markAsDelivered(Integer orderId) {
+		Optional<OrderDetail> orderDetail = orderDetailDao.findById(orderId);
+		if(orderDetail.isPresent()) {
+			orderDetail.get().setOrderStatus("Delivered");
+			return orderDetailDao.save(orderDetail.get());
+		}else {
+			return null;
+		}
+		
+		
+		
 	}
 }

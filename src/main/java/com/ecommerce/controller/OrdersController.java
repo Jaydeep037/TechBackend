@@ -31,8 +31,13 @@ public class OrdersController {
 		return this.orderDetailService.getOrdetails();
 	}
 	
-	@GetMapping("/getAllOrders")
-	public List<OrderDetail> getAllOrderDetails(){
-		return this.orderDetailService.getAllOrderDetails();
+	@GetMapping("/getAllOrders/{status}")
+	public List<OrderDetail> getAllOrderDetails(@PathVariable String status){
+		return this.orderDetailService.getAllOrderDetails(status);
+	}
+	
+	@GetMapping("/markAsDelivered/{orderId}")
+	public OrderDetail markAsDelivered(@PathVariable Integer orderId) {
+	return this.orderDetailService.markAsDelivered(orderId);	
 	}
 }
