@@ -43,7 +43,7 @@ public class OrdersController {
 	}
 	
 	@GetMapping("/transaction/{amount}")
-	public TransactionDetails createTransaction(@PathVariable Long amount) {
+	public TransactionDetails createTransaction(@PathVariable Integer amount) {
 		return this.orderDetailService.createTransaction(amount);
 	}
 	

@@ -100,7 +100,7 @@ public class OrderDetailService {
 		}	
 	}
 
-	public TransactionDetails createTransaction(Long amount) {
+	public TransactionDetails createTransaction(Integer amount) {
 		try {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("amount", amount*100);
@@ -116,7 +116,7 @@ public class OrderDetailService {
 	
 	private TransactionDetails prepareTransaction(Order order) {
 		String orderId = order.get("id");
-		Long amount = order.get("amount");
+		Integer amount = order.get("amount");
 		String currency = order.get("currency");
 		TransactionDetails transactionDetails = new TransactionDetails(orderId, amount, currency,KEY);
 		return transactionDetails;

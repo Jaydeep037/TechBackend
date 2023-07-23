@@ -3,7 +3,7 @@ package com.ecommerce.entity;
 public class TransactionDetails {
 
 	private String orderId;
-	private Long amount;
+	private Integer amount;
 	private String currency;
 	private String key;
 	public String getOrderId() {
@@ -12,10 +12,10 @@ public class TransactionDetails {
 	public void setOrderId(String orderId) {
 		this.orderId = orderId;
 	}
-	public Long getAmount() {
+	public Integer getAmount() {
 		return amount;
 	}
-	public void setAmount(Long amount) {
+	public void setAmount(Integer amount) {
 		this.amount = amount;
 	}
 	public String getCurrency() {
@@ -30,7 +30,7 @@ public class TransactionDetails {
 	public void setKey(String key) {
 		this.key = key;
 	}
-	public TransactionDetails(String orderId, Long amount, String currency, String key) {
+	public TransactionDetails(String orderId, Integer amount, String currency, String key) {
 		super();
 		this.orderId = orderId;
 		this.amount = amount;
