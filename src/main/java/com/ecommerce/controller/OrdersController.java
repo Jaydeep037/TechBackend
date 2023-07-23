@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.entity.OrderDetail;
 import com.ecommerce.entity.OrderInput;
+import com.ecommerce.entity.TransactionDetails;
 import com.ecommerce.service.OrderDetailService;
 
 @RestController
@@ -40,4 +41,10 @@ public class OrdersController {
 	public OrderDetail markAsDelivered(@PathVariable Integer orderId) {
 	return this.orderDetailService.markAsDelivered(orderId);	
 	}
+	
+	@GetMapping("/transaction/{amount}")
+	public TransactionDetails createTransaction(@PathVariable Long amount) {
+		return this.orderDetailService.createTransaction(amount);
+	}
+	
 }

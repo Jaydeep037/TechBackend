@@ -19,6 +19,7 @@ public class OrderDetail {
 	private String orderAlternateContantNumber;
 	private String orderStatus;
 	private Double orderAmount;
+	private String transactionId;
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	private Product product;
@@ -80,8 +81,18 @@ public class OrderDetail {
 	public void setUser(User user) {
 		this.user = user;
 	}
+	
+	public String getTransactionId() {
+		return transactionId;
+	}
+	public void setTransactionId(String transactionId) {
+		this.transactionId = transactionId;
+	}
+	
+	
 	public OrderDetail(String orderFullName, String orderFullOrder, String orderContactNumber,
-			String orderAlternateContantNumber, String orderStatus, Double orderAmount, Product product, User user) {
+			String orderAlternateContantNumber, String orderStatus, String transactionId, Double orderAmount,
+			Product product, User user) {
 		super();
 		this.orderFullName = orderFullName;
 		this.orderFullOrder = orderFullOrder;
@@ -89,6 +100,7 @@ public class OrderDetail {
 		this.orderAlternateContantNumber = orderAlternateContantNumber;
 		this.orderStatus = orderStatus;
 		this.orderAmount = orderAmount;
+		this.transactionId = transactionId;
 		this.product = product;
 		this.user = user;
 	}

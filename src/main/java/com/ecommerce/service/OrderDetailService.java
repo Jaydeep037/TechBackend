@@ -3,6 +3,7 @@ package com.ecommerce.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +18,10 @@ import com.ecommerce.entity.OrderDetail;
 import com.ecommerce.entity.OrderInput;
 import com.ecommerce.entity.OrderProductQuantity;
 import com.ecommerce.entity.Product;
+import com.ecommerce.entity.TransactionDetails;
 import com.ecommerce.entity.User;
+import com.razorpay.Order;
+import com.razorpay.RazorpayClient;
 
 @Service
 public class OrderDetailService {
@@ -35,6 +39,10 @@ public class OrderDetailService {
 	
 	@Autowired
 	CartDao cartDao;
+	
+	public static final String KEY = "rzp_test_EMPKQtrxaEzhC4";
+	public static final String SECRET_KEY ="h1OcTafPXUzuPdS1C6nWUrnm";
+	public static final String CURRENCY ="INR";
 	
 	
 	public List<OrderDetail> getOrdetails(){
@@ -59,6 +67,7 @@ public class OrderDetailService {
 					orderInput.getContactNumber(),
 					orderInput.getAlternateContactNumber(),
 					ORDER_PLACED,
+					orderInput.getTransactionId(),
 					product.getProductDiscountedPrice() * orderProductQuantity.getQuantity(),
 					product,
 					user
@@ -88,9 +97,28 @@ public class OrderDetailService {
 			return orderDetailDao.save(orderDetail.get());
 		}else {
 			return null;
+		}	
+	}
+
+	public TransactionDetails createTransaction(Long amount) {
+		try {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("amount", amount*100);
+			jsonObject.put("currency", CURRENCY);
+			RazorpayClient razorClient = new RazorpayClient(KEY, SECRET_KEY);	
+			Order order = razorClient.orders.create(jsonObject);
+			return prepareTransaction(order);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
-		
-		
-		
+		return null;
+	}
+	
+	private TransactionDetails prepareTransaction(Order order) {
+		String orderId = order.get("id");
+		Long amount = order.get("amount");
+		String currency = order.get("currency");
+		TransactionDetails transactionDetails = new TransactionDetails(orderId, amount, currency,KEY);
+		return transactionDetails;
 	}
 }

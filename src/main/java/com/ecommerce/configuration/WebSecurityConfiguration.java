@@ -57,7 +57,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter	 {
 	    .antMatchers("/forUser").hasAnyAuthority("Admin","User")
 	    .antMatchers("/placeorder","/getProductDetails/{isSingleProductCheckout}/{productId}",
 	    		"/newCart/{productId}","/getCartDetails",
-	    		"/deleteCart/{cartId}","/getOrderDetails").hasAnyAuthority("User")
+	    		"/deleteCart/{cartId}","/getOrderDetails",
+	    		"/transcation/{amount}"
+	    		).hasAnyAuthority("User")
 	    .antMatchers("/addNewProduct","/deleteProducts/{productId}",
 	    			"/getAllOrders","/markAsDelivered/{orderId}").hasAnyAuthority("Admin")
 //		.antMatchers(HttpHeaders.ALLOW).permitAll()
