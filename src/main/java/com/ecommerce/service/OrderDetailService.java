@@ -1,16 +1,26 @@
 package com.ecommerce.service;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.Authenticator;
-import javax.mail.Message;
+import javax.mail.BodyPart;
+import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.transaction.Transactional;
 
 import org.json.JSONObject;
@@ -24,6 +34,7 @@ import com.ecommerce.dao.OrderDetailDao;
 import com.ecommerce.dao.ProductDao;
 import com.ecommerce.dao.UserDao;
 import com.ecommerce.entity.Cart;
+import com.ecommerce.entity.ImageModel;
 import com.ecommerce.entity.OrderDetail;
 import com.ecommerce.entity.OrderInput;
 import com.ecommerce.entity.OrderProductQuantity;
@@ -91,12 +102,12 @@ public class OrderDetailService {
 			String from="jaydeepingale3464@gmail.com";
 			String to =orderInput.getEmail();			
 			orderDetailDao.save(orderDetail);
-			sendEmail(from,to,orderInput.getFullName(),orderDetail.getTransactionId(),orderInput.getFullAddress(),orderDetail.getOrderAmount());
+			sendEmail(from,to,orderInput.getFullName(),orderDetail.getTransactionId(),orderInput.getFullAddress(),orderDetail.getOrderAmount(),product);
 		}
 	}
 	
 	
-	private void sendEmail(String from, String to,String customerName,String orderId,String address,Double totalAmount) {
+	private void sendEmail(String from, String to,String customerName,String orderId,String address,Double totalAmount,Product product) {
 	    Properties properties = new Properties();
 	    properties.setProperty("mail.smtp.host", "smtp.gmail.com");
 	    properties.setProperty("mail.smtp.port", "587");
@@ -119,10 +130,24 @@ public class OrderDetailService {
 	         helper.setFrom(new InternetAddress(from));
 	         helper.setTo(new InternetAddress(to));
 	         helper.setSubject("Your Order has been Placed!");
-
-	         String emailContent = getEmailContent(customerName, orderId, address, totalAmount);
+	         byte[] picByte = null;
+	         	Set<ImageModel> productImages = product.getProductImages();		
+	         for (ImageModel imageModel : productImages) {
+	        	 	picByte = imageModel.getPicByte();
+	         	}
+	         BodyPart textPart = new MimeBodyPart();
+	         String emailContent = getEmailContent(customerName, orderId, address,product.getProductName(), totalAmount);
+	         textPart.setContent(emailContent,"text/html;charset=utf-8");
+	         BodyPart imagePart = new MimeBodyPart();
+	         DataSource datasource = new FileDataSource(getImageFileFromByteArray(picByte));
+	         imagePart.setDataHandler(new DataHandler(datasource));
+	         imagePart.setHeader("Content-ID", "<image>");
+	         
+	         Multipart multipart = new MimeMultipart();
+	         multipart.addBodyPart(textPart);
+	         multipart.addBodyPart(imagePart);
 	         helper.setText(emailContent, true); // Set the second parameter to true to send the email as HTML
-
+	         message.setContent(multipart);
 	         Transport.send(message);
 	         System.out.println("Message sent successfully");
 	    } catch (Exception e) {
@@ -132,7 +157,41 @@ public class OrderDetailService {
 	}
 	
 
-	private String getEmailContent(String customerName, String orderId, String address, Double totalAmount) {
+	private File getImageFileFromByteArray(byte[] picByte) {
+	    // Create a temporary file to save the image
+	    File tempFile = null;
+	    FileOutputStream fos = null;
+
+	    try {
+	        tempFile = File.createTempFile("temp_image", ".png");
+	        fos = new FileOutputStream(tempFile);
+
+	        // Write the byte array data to the file
+	        fos.write(picByte);
+
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	        // Handle the exception if there's an issue writing to the file
+	        // For example, log the error or display an error message to the user
+	    } finally {
+	        // Close the FileOutputStream to release system resources
+	        try {
+	            if (fos != null) {
+	                fos.close();
+	            }
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	            // Handle the exception if there's an issue closing the FileOutputStream
+	            // For example, log the error or display an error message to the user
+	        }
+	    }
+
+	    return tempFile;
+	}
+
+	private String getEmailContent(String customerName, String orderId, String address,String productName, Double totalAmount) {
+		
+		String imageHtml = "<span><img src=\"cid:image\" width=\"100\" height=\"100\"></span>";
 		return "<!DOCTYPE html>\n" +
 		           "<html>\n" +
 		           "<head>\n" +
@@ -179,10 +238,12 @@ public class OrderDetailService {
 		           "            <p>Order Details:</p>\n" +
 		           "            <ul>\n" +
 		           "                <li><b>Order ID: " + orderId + "</b></li>\n" +
-		           "                <li><b>Delivery Address: " + address + "</b></li>\n" +
-		           "                <li><b>Total Amount: " + totalAmount + "</b></li>\n" +
+		           "				<li><b>Product Name: "+productName +"</b></li>\n"+
+		           "                <li><b>Delivery Address: " + address + "</b></li>\n"+
+		           "                <li><b>Total Amount: " + totalAmount + "</b></li>\n"+
 		           "                <!-- Add more order details here -->\n" +
 		           "            </ul>\n" +
+		           				"&nbsp;&nbsp;"+imageHtml +"\n"+
 		           "            <p>We will notify you once your order is shipped. If you have any questions or need assistance, feel free to contact our support team.</p>\n" +
 		           "            <p>Thank you for choosing us!</p>\n" +
 		           "        </div>\n" +
