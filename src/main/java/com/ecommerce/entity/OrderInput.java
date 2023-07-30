@@ -5,6 +5,7 @@ import java.util.List;
 public class OrderInput {
 
 	private String fullName;
+	private String email;
 	private String fullAddress;
 	private String contactNumber;
 	private String alternateContactNumber;
@@ -22,6 +23,13 @@ public class OrderInput {
 	}
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
+	}
+	
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	public String getFullAddress() {
 		return fullAddress;

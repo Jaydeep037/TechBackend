@@ -14,6 +14,7 @@ public class OrderDetail {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer orderId;
 	private String orderFullName;
+	private String email;
 	private String orderFullOrder;
 	private String orderContactNumber;
 	private String orderAlternateContantNumber;
@@ -89,12 +90,20 @@ public class OrderDetail {
 		this.transactionId = transactionId;
 	}
 	
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
 	
-	public OrderDetail(String orderFullName, String orderFullOrder, String orderContactNumber,
-			String orderAlternateContantNumber, String orderStatus, String transactionId, Double orderAmount,
+	
+	public OrderDetail(String orderFullName, String email, String orderFullOrder, String orderContactNumber,
+			String orderAlternateContantNumber, String orderStatus, Double orderAmount, String transactionId,
 			Product product, User user) {
 		super();
 		this.orderFullName = orderFullName;
+		this.email = email;
 		this.orderFullOrder = orderFullOrder;
 		this.orderContactNumber = orderContactNumber;
 		this.orderAlternateContantNumber = orderAlternateContantNumber;
